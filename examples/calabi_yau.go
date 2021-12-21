@@ -8,16 +8,18 @@ import (
 )
 
 func main() {
-	eye := ln.Vector{-2, -2, 8}
+	eye := ln.Vector{-2, -2, 5}
 	center := ln.Vector{0.1, 0, 0}
 	up := ln.Vector{0, 1, 0}
 	scene := ln.Scene{}
 	scene.Add(CalabiYau(5, math.Pi/4, 16, -1, 1))
-	width := 11.0 * 200
-	height := 14.0 * 200
-	fovy := 30.0
+	dpi := 96.0
+	width := 11.0 * dpi
+	height := 14.0 * dpi
+	fovy := 45.0
 	paths := scene.Render(eye, center, up, width, height, fovy, 0.1, 10, 0.01)
-	paths.WriteToPNG("out.png", width, height)
+	paths.WriteToPNG("calabi_yau.png", width, height)
+	paths.WriteToSVG("calabi_yau.svg", width, height)
 }
 
 func CalabiYau(n int, alpha float64, count int, rmin float64, rmax float64) *ln.Mesh {
@@ -28,6 +30,7 @@ func CalabiYau(n int, alpha float64, count int, rmin float64, rmax float64) *ln.
 	di := (0.5 * math.Pi) / float64(count-1)
 
 	vertices := []ln.Vector{}
+
 	for k0 := 0; k0 < n; k0++ {
 		for k1 := 0; k1 < n; k1++ {
 			// Real and imaginary indices.
@@ -51,7 +54,7 @@ func CalabiYau(n int, alpha float64, count int, rmin float64, rmax float64) *ln.
 	patchVertexCount := int(math.Pow(float64(vertexCount), 2))
 	subdivisions := vertexCount - 1
 
-	var triangles []*ln.Triangle
+	triangles := []*ln.Triangle{}
 
 	for i := 0; i < n*n; i++ {
 		offset := i * patchVertexCount
